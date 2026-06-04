@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Experiment 001 — The French Macaron</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4efe4;
+    --paper-edge: #e8dfca;
+    --ink: #1a1a1a;
+    --ink-soft: #444;
+    --rule: #b8a888;
+    --grid: #d6c9a8;
+    --accent: #8a2a2a;
+    --success: #2d5d3a;
+    --warn: #a85a00;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Crimson Pro', Georgia, serif;
+    background: #2a2522;
+    color: var(--ink);
+    line-height: 1.6;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  .stamp {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    border: 3px solid var(--accent);
+    color: var(--accent);
+    padding: 8px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    transform: rotate(8deg);
+    background: rgba(244, 239, 228, 0.92);
+    opacity: 0.85;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .notebook {
+    max-width: 880px;
+    margin: 0 auto;
+    background: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 24px 24px;
+    box-shadow:
+      0 30px 60px rgba(0,0,0,0.5),
+      inset 0 0 80px rgba(184, 168, 136, 0.18);
+    padding: 60px 70px 80px;
+    position: relative;
+    border-left: 30px solid #c95757;
+    border-image: linear-gradient(to bottom, #c95757 0%, #c95757 100%) 1;
+  }
+
+  .notebook::before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: rgba(201,87,87,0.4);
+  }
+
+  header {
+    text-align: center;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 36px;
+  }
+
+  .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: 44px;
+    font-weight: 700;
+    font-style: italic;
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+  }
+
+  .author-block {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 18px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  section { margin: 38px 0; }
+
+  h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--ink);
+    border-left: 4px solid var(--accent);
+    padding-left: 14px;
+    margin-bottom: 18px;
+  }
+
+  h2 .num {
+    color: var(--accent);
+    margin-right: 10px;
+  }
+
+  h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--ink-soft);
+    margin: 22px 0 10px;
+  }
+
+  p { margin-bottom: 14px; font-size: 17px; }
+
+  .abstract {
+    font-style: italic;
+    background: rgba(255,255,255,0.35);
+    border-left: 3px solid var(--rule);
+    padding: 18px 22px;
+    font-size: 16px;
+  }
+
+  .hypothesis-box {
+    background: rgba(138, 42, 42, 0.05);
+    border: 1px dashed var(--accent);
+    padding: 20px 26px;
+    position: relative;
+  }
+
+  .hypothesis-box::before {
+    content: "H₁";
+    position: absolute;
+    top: -14px;
+    left: 18px;
+    background: var(--paper);
+    padding: 0 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 14px;
+  }
+
+  .grid-two {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  table.materials {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+
+  table.materials th,
+  table.materials td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  table.materials th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ink-soft);
+    border-bottom: 2px solid var(--ink);
+  }
+
+  table.materials td.qty {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  ol.procedure {
+    list-style: none;
+    counter-reset: step;
+  }
+
+  ol.procedure li {
+    counter-increment: step;
+    position: relative;
+    padding: 14px 0 14px 56px;
+    border-bottom: 1px dotted var(--rule);
+    font-size: 16px;
+  }
+
+  ol.procedure li::before {
+    content: "STEP " counter(step, decimal-leading-zero);
+    position: absolute;
+    left: 0;
+    top: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 1px;
+    background: var(--paper);
+    padding-right: 8px;
+  }
+
+  ol.procedure li:last-child { border-bottom: none; }
+
+  .critical {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: var(--accent);
+    color: var(--paper);
+    padding: 2px 7px;
+    margin-left: 6px;
+    letter-spacing: 1px;
+    vertical-align: middle;
+    text-transform: uppercase;
+  }
+
+  .annotation {
+    display: block;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(168, 90, 0, 0.08);
+    border-left: 2px solid var(--warn);
+    font-size: 14px;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .annotation::before {
+    content: "⚠ FAILURE MODE: ";
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 10px;
+    color: var(--warn);
+    letter-spacing: 1px;
+  }
+
+  .variables {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 16px 0;
+  }
+
+  .var-card {
+    background: rgba(255,255,255,0.4);
+    border: 1px solid var(--rule);
+    padding: 14px;
+  }
+
+  .var-card .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+  }
+
+  .var-card .value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--accent);
+  }
+
+  .results {
+    background: rgba(45, 93, 58, 0.08);
+    border: 1px solid var(--success);
+    padding: 22px 26px;
+    position: relative;
+  }
+
+  .results h3:first-child { margin-top: 0; }
+
+  .pass-fail {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    margin-top: 16px;
+    border: 1px solid var(--ink);
+  }
+
+  .pass-fail > div {
+    padding: 14px 18px;
+  }
+
+  .pass-fail .pass {
+    background: rgba(45, 93, 58, 0.12);
+    border-right: 1px solid var(--ink);
+  }
+
+  .pass-fail .fail {
+    background: rgba(138, 42, 42, 0.08);
+  }
+
+  .pass-fail h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .pass-fail .pass h4 { color: var(--success); }
+  .pass-fail .fail h4 { color: var(--accent); }
+
+  .pass-fail ul {
+    list-style: none;
+    font-size: 14px;
+  }
+
+  .pass-fail li { padding: 3px 0; }
+  .pass-fail .pass li::before { content: "✓ "; color: var(--success); font-weight: 700; }
+  .pass-fail .fail li::before { content: "✗ "; color: var(--accent); font-weight: 700; }
+
+  footer {
+    margin-top: 50px;
+    padding-top: 24px;
+    border-top: 2px solid var(--ink);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align: center;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .signature {
+    margin-top: 20px;
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .signature::before {
+    content: "Researcher: ";
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--ink-soft);
+    font-style: normal;
+  }
+
+  @media (max-width: 700px) {
+    body { padding: 15px 5px; }
+    .notebook { padding: 40px 24px 50px; border-left-width: 18px; }
+    h1 { font-size: 30px; }
+    .grid-two, .variables { grid-template-columns: 1fr; }
+    .stamp { top: 15px; right: 15px; font-size: 10px; padding: 5px 10px; }
+    .author-block { flex-direction: column; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stamp">CLASSIFIED — LAB USE</div>
+
+<article class="notebook">
+
+  <header>
+    <div class="meta">Laboratory Notebook · Vol. I · Entry 001</div>
+    <h1>The French Macaron</h1>
+    <div class="subtitle">A Study in Meringue Stability &amp; Albumen Behaviour</div>
+    <div class="author-block">
+      <span>Date: 04 · VI · 2026</span>
+      <span>Field: Confectionery Physics</span>
+      <span>Status: Reproducible</span>
+    </div>
+  </header>
+
+  <section>
+    <h2><span class="num">§01</span>Abstract</h2>
+    <div class="abstract">
+      The French macaron is a meringue-based confection notorious for its
+      narrow margin of error. This experiment investigates the conditions
+      under which a homogenous batter (the <em>macaronage</em>) yields
+      shells exhibiting smooth domes, defined "feet," and hollow-free
+      interiors. Deviations of less than five percent in humidity,
+      mixing folds, or oven temperature are demonstrated to produce
+      catastrophic structural failure.
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">§02</span>Hypothesis</h2>
+    <div class="hypothesis-box">
+      <p>
+        <em>If</em> egg white proteins are denatured to a stable
+        meringue at a sugar saturation of ≥66% w/w, <em>and</em>
+        almond flour is incorporated via exactly 40–50 folds to reach
+        the "lava flow" viscosity (<code>η ≈ 1.5 Pa·s</code>),
+        <em>then</em> the resulting shells, when baked at 150 °C in
+        low ambient humidity (RH &lt; 50%), will develop the
+        characteristic ruffled foot and smooth crown within ±3 mm
+        tolerance.
+      </p>
+      <p style="margin-bottom:0;">
+        <em>Null hypothesis (H₀):</em> Macaron morphology is
+        independent of mixing count and ambient humidity. (Predicted:
+        rejected.)
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">§03</span>Controlled Variables</h2>
+    <div class="variables">
+      <div class="var-card">
+        <div class="label">Ambient Humidity</div>
+        <div class="value">&lt; 50% RH</div>
+      </div>
+      <div class="var-card">
+        <div class="label">Oven Temperature</div>
+        <div class="value">150 °C</div>
+      </div>
+      <div class="var-card">
+        <div class="label">Egg White Age</div>
+        <div class="value">72 hr</div>
+      </div>
+      <div class="var-card">
+        <div class="label">Almond Flour Mesh</div>
+        <div class="value">≥ 100 μm</div>
+      </div>
+      <div class="var-card">
+        <div class="label">Resting Time</div>
+        <div class="value">30–60 min</div>
+      </div>
+      <div class="var-card">
+        <div class="label">Macaronage Folds</div>
+        <div class="value">40–50</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">§04</span>Reagents &amp; Apparatus</h2>
+    <div class="grid-two">
+      <div>
+        <h3>Shells</h3>
+        <table class="materials">
+          <thead><tr><th>Reagent</th><th>Mass</th></tr></thead>
+          <tbody>
+            <tr><td>Aged egg whites</td><td class="qty">100 g</td></tr>
+            <tr><td>Caster sugar</td><td class="qty">100 g</td></tr>
+            <tr><td>Almond flour (sifted ×2)</td><td class="qty">100 g</td></tr>
+            <tr><td>Icing sugar</td><td class="qty">100 g</td></tr>
+            <tr><td>Cream of tartar</td><td class="qty">¼ tsp</td></tr>
+            <tr><td>Gel colourant</td><td class="qty">q.s.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <h3>Ganache Filling</h3>
+        <table class="materials">
+          <thead><tr><th>Reagent</th><th>Mass</th></tr></thead>
+          <tbody>
+            <tr><td>Dark chocolate (70%)</td><td class="qty">120 g</td></tr>
+            <tr><td>Heavy cream</td><td class="qty">120 g</td></tr>
+            <tr><td>Unsalted butter</td><td class="qty">20 g</td></tr>
+            <tr><td>Sea salt</td><td class="qty">pinch</td></tr>
+          </tbody>
+        </table>
+        <h3 style="margin-top:18px;">Apparatus</h3>
+        <p style="font-size:14px; color:var(--ink-soft);">
+          Stand mixer (whisk attachment), digital scale (±0.1 g),
+          infrared thermometer, sieve (60-mesh), silicone spatula,
+          piping bag with 10 mm round tip, parchment-lined sheet pan,
+          oven thermometer.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">§05</span>Procedure</h2>
+    <ol class="procedure">
+      <li>
+        Weigh almond flour and icing sugar; sift twice through a
+        60-mesh sieve. Discard residue larger than 100 μm.
+        <span class="annotation">Unsifted flour causes pitted, lunar-cratered shells.</span>
+      </li>
+      <li>
+        Bring egg whites to 20 °C. Whisk on low until foamy
+        (~60 s), then add cream of tartar.
+        <span class="annotation">A single drop of yolk denatures the foam; whites will not whip.</span>
+      </li>
+      <li>
+        Increase speed to medium. Once soft peaks form, rain in caster
+        sugar at 10 g intervals over 90 seconds. Continue to stiff,
+        glossy peaks. <span class="critical">Critical</span>
+        <span class="annotation">Under-beaten meringue → flat shells. Over-beaten meringue → cracked, hollow shells.</span>
+      </li>
+      <li>
+        Add gel colourant. Fold dry mixture into meringue in three
+        additions, deflating intentionally.
+      </li>
+      <li>
+        Execute the <em>macaronage</em>: fold and press the batter
+        against the bowl wall. Count exactly 40–50 strokes until the
+        batter flows in a ribbon and reincorporates within ~10 seconds.
+        <span class="critical">Critical</span>
+        <span class="annotation">One fold too many liquefies the batter — shells spread, no feet form.</span>
+      </li>
+      <li>
+        Transfer to piping bag. Pipe 3 cm rounds onto parchment, held
+        perpendicular at 1 cm above surface. Rap pan firmly against
+        counter 3× to release air bubbles.
+      </li>
+      <li>
+        Rest at room temperature, undisturbed, until a dry skin forms
+        (touch test: finger lifts cleanly). Typically 30–60 minutes.
+        <span class="critical">Critical</span>
+        <span class="annotation">Insufficient resting in humid air → shells crack during bake.</span>
+      </li>
+      <li>
+        Bake at 150 °C, single rack, for 14 minutes. Rotate at
+        7 minutes. Do not open the oven before minute 12.
+        <span class="annotation">A 5 °C drop collapses the rising foot mid-bake.</span>
+      </li>
+      <li>
+        Cool shells <em>completely</em> on the parchment (≥ 20 min)
+        before lifting. Premature removal tears the foot from the
+        crown.
+      </li>
+      <li>
+        Pipe ganache onto half the shells; sandwich with a gentle
+        twist. Mature in a sealed container at 4 °C for 24 hours
+        before consumption.
+        <span class="annotation">Skipping maturation yields a dry, brittle shell. Patience is the final reagent.</span>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2><span class="num">§06</span>Expected Results</h2>
+    <div class="results">
+      <p>
+        A successful trial yields a 32 mm diameter shell, glossy
+        crown, lateral ruffled foot of 3–4 mm rise, and a chewy
+        interior with no air pocket between crown and foot. The
+        sandwiched macaron weighs 12 ± 1 g.
+      </p>
+      <div class="pass-fail">
+        <div class="pass">
+          <h4>Successful Trial</h4>
+          <ul>
+            <li>Smooth, domed crown</li>
+            <li>Defined "feet" (3–4 mm)</li>
+            <li>No interior hollow</li>
+            <li>Slight resistance, chewy bite</li>
+            <li>Color uniform across batch</li>
+          </ul>
+        </div>
+        <div class="fail">
+          <h4>Failed Trial</h4>
+          <ul>
+            <li>Cracked or pitted crown</li>
+            <li>No feet (flat discs)</li>
+            <li>Hollow shell, paper-thin</li>
+            <li>Sticking to parchment</li>
+            <li>Browning above 150 °C</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">§07</span>Discussion</h2>
+    <p>
+      The macaron is, in effect, a stabilised colloid: a sugar-bound
+      protein scaffold inflated by water vapour during baking. Its
+      failure modes are not culinary — they are
+      <em>thermodynamic.</em> Overmixing collapses the meringue's
+      air cells; under-resting traps moisture beneath an unset skin;
+      a humid kitchen prevents the skin from forming at all. There is
+      no margin for improvisation. The macaron rewards the patient
+      and punishes the bold.
+    </p>
+    <p>
+      Future investigations should examine the effect of
+      altitude-corrected sugar ratios and the substitution of
+      Italian-meringue method for the French method described herein.
+    </p>
+  </section>
+
+  <footer>
+    Lab Notebook · My Baking Experiments · 2026
+    <div class="signature">L. Capitan-Castonguay, Principal Investigator</div>
+  </footer>
+
+</article>
+
+</body>
+</html>
